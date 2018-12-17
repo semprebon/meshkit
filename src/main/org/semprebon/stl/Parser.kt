@@ -2,12 +2,13 @@ package org.semprebon.stl
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.semprebon.mesh.Mesh
-import java.io.*
+import java.io.DataInputStream
+import java.io.FileInputStream
+import java.io.FileReader
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
-import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -17,6 +18,7 @@ import java.util.logging.Logger
 class Parser {
     companion object {
         val logger = Logger.getLogger(Parser.javaClass.name)
+        val DELIMS = Regex(" \t\n")
     }
 
     /**
@@ -32,11 +34,9 @@ class Parser {
      */
     @Throws(IOException::class)
     fun parse(filepath: Path): Mesh {
-        val parser = BinaryParser(filepath);
+        val parser = BinaryParser(filepath)
         return parser.parse()
     }
-
-    val DELIMS = Regex(" \t\n")
 
     /**
      * Determine if the file is ascii or binary STL. Ascii STL should start with the word
@@ -173,7 +173,7 @@ class Parser {
                 // read faces
                 while (input.available() > 0) {
                     val normal = readVector()
-                    mesh.add(readTriangle())
+                    mesh.add(*readTriangle())
                     readAttributeByteCount()
                 }
             return mesh
@@ -199,8 +199,8 @@ class Parser {
             return Vector3D(p1, p2, p3)
         }
 
-        private fun readTriangle(): List<Vector3D> {
-            return listOf(readVector(), readVector(), readVector())
+        private fun readTriangle(): Array<Vector3D> {
+            return arrayOf(readVector(), readVector(), readVector())
         }
 
         private fun readAttributeByteCount(): Short {

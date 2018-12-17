@@ -1,7 +1,4 @@
-package org.semprebon.stl_terraformer
-
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+package org.semprebon.mesh
 
 class ConversionTest {
 

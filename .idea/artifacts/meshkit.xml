@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="meshkit">
+    <output-path>$PROJECT_DIR$/out/artifacts/meshkit</output-path>
+    <root id="archive" name="meshkit.jar">
+      <element id="module-output" name="meshkit" />
+    </root>
+  </artifact>
+</component>

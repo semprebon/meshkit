@@ -1,15 +1,13 @@
 package org.semprebon.stl
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.FileSystems
 
 class ParserTest {
-    companion object {
+    companion object
 
-    }
-
-    class `parseSTLFile`() {
+    class `parseSTLFile` {
         @Test
         fun `with binary STL file`() {
             val mesh = Parser().parse(FileSystems.getDefault().getPath("resources/house_binary.stl"))
@@ -17,4 +15,5 @@ class ParserTest {
             assertEquals(10, mesh.vertices.size)
         }
     }
+
 }

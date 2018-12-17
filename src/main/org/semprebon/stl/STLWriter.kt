@@ -24,12 +24,12 @@ class STLWriter(val filename: String) {
     }
 
     fun writeHeader(out: OutputStream) {
-        for (i in 0..79) out.write(0);
+        for (i in 0..79) out.write(0)
     }
 
     fun writePoint(out: OutputStream, point: Vector3D) {
-        EndianUtils.writeSwappedFloat(out, point.x.toFloat());
-        EndianUtils.writeSwappedFloat(out, point.y.toFloat());
-        EndianUtils.writeSwappedFloat(out, point.z.toFloat());
+        EndianUtils.writeSwappedFloat(out, point.x.toFloat())
+        EndianUtils.writeSwappedFloat(out, point.y.toFloat())
+        EndianUtils.writeSwappedFloat(out, point.z.toFloat())
     }
 }

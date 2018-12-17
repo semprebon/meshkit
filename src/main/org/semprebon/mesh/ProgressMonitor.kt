@@ -1,5 +1,8 @@
 package org.semprebon.mesh
 
+import java.util.function.Predicate
+import java.util.function.UnaryOperator
+
 class ProgressMonitor(val maxEvents: Int) {
     var numEvents = 0
     var nextThreshold = maxEvents/20
@@ -12,5 +15,9 @@ class ProgressMonitor(val maxEvents: Int) {
             System.out.print(".")
             nextThreshold += (maxEvents - numEvents)/20
         }
+    }
+
+    fun <T>monitorProgressFilter(f: UnaryOperator<T>): UnaryOperator<T> {
+        return UnaryOperator { v -> reportEvent(1); f.apply(v) }
     }
 }
