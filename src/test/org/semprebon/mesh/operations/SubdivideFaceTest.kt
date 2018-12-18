@@ -1,6 +1,5 @@
 package org.semprebon.mesh.operations
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

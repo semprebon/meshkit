@@ -53,4 +53,5 @@ object Conversion {
     fun sameEdge(e1: Pair<Vector2D,Vector2D>, e2: Pair<Vector2D, Vector2D>)
             = (nearTo(e1.first, e2.first) && nearTo(e1.second, e2.second))
                 || (nearTo(e1.first, e2.second) && nearTo(e1.second, e2.first))
+
 }

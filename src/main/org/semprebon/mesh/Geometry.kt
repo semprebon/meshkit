@@ -1,9 +1,14 @@
 package org.semprebon.mesh
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 
-object Math2D {
+object Geometry {
     val tolerance = 0.005
+
+    fun center(vertices: List<Vector3D>): Vector3D {
+        return vertices.reduce { a, b -> a.add(b) }.scalarMultiply(1.0/vertices.size)
+    }
 
     fun determinant(vertices: List<Vector2D>) =
         vertices[0].x * (vertices[1].y - vertices[2].y) +
@@ -69,5 +74,11 @@ object Math2D {
         // The faces overlap
         return true
     }
+
+    class Incrementer(val limit: Int) {
+        fun next(i: Int) = (i + 1) % limit
+        fun prev(i: Int) = (i - 1) % limit
+    }
+
 
 }

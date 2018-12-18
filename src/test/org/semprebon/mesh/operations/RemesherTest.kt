@@ -7,6 +7,7 @@ import org.junit.jupiter.api.TestInstance
 import org.semprebon.mesh.MeshTestHelper
 import java.util.function.Predicate
 import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.filters.Util
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RemesherTest {
@@ -31,7 +32,8 @@ class RemesherTest {
         assertTrue(notOriginFilter.test(listOf(Vector3D(1.0, 0.0, 0.0))))
         assertFalse(notOriginFilter.test(listOf(Vector3D(1.0, 0.0, 0.0), Vector3D(0.0, 0.0, 0.0))))
 
-        val remesher = Remesher(Remesher.filteredRemesher(notOriginFilter, SubdivideFace()))
+        val remesher = Remesher(Remesher.filteredFaceSplitter(
+            Util.createFacePredicateFor(notOriginFilter), Remesher.faceSplitterFor(SubdivideFace())))
 
         val originalMesh = simpleMesh()
         val mesh = remesher.apply(originalMesh)
