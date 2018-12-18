@@ -1,6 +1,7 @@
 package org.semprebon.mesh
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import org.junit.jupiter.api.Assertions
 import java.util.*
 
@@ -30,6 +31,39 @@ open class MeshTestHelper {
         )
     }
 
+    fun v(x: Double, y: Double, z: Double) = Vector3D(x, y, z)
+    fun v(x: Double, y: Double) = Vector2D(x, y)
+
+    fun triangleFrom(vertexes: List<Vector2D>) =
+        listOf(Conversion.to3d(vertexes[0]), Conversion.to3d(vertexes[1]), Conversion.to3d(vertexes[2]))
+
+    fun trianglesFrom(path: List<Vector2D>): List<List<Vector3D>> {
+        if (path.size == 3) return listOf(triangleFrom(path))
+        else {
+            val newPath = path.take(1) + path.drop(2)
+            return listOf(triangleFrom(path.take(3))) + trianglesFrom(newPath)
+        }
+    }
+
+    fun meshFrom(path: List<Vector2D>): Mesh = Mesh(trianglesFrom(path))
+
+    /**
+     * Create a mesh of unit squares with its lower left corner at 0,0
+     */
+    fun squareMesh(n:Int, z: Double = 0.0): Mesh {
+        val mesh = Mesh(tolerance)
+        for (i in 0..n-1) {
+            for (j in 0..n-1) {
+                mesh.add(
+                    v(i.toDouble(), j.toDouble(), z),
+                    v((i+1).toDouble(), j.toDouble(), z),
+                    v((i+1).toDouble(), (j+1).toDouble(), z),
+                    v(i.toDouble(), (j+1).toDouble(), z))
+            }
+        }
+        return mesh
+    }
+
     /**
      * Returns a simple mesh of four points, three triangles with a common vertex
      */
@@ -38,7 +72,7 @@ open class MeshTestHelper {
         val vs = listOf(
             Vector3D(0.0, 0.0, 0.0),
             Vector3D(2.0, 0.0, 0.0),
-            Vector3D(1.0, 1.0, 0.0),
+            Vector3D(0.5, 0.5, 0.0),
             Vector3D(0.0, 2.0, 0.0))
         mesh.Face(vs[0], vs[1], vs[2])
         mesh.Face(vs[2], vs[1], vs[3])

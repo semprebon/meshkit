@@ -6,13 +6,19 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import java.lang.IllegalArgumentException
 import kotlin.math.min
 
-class Mesh(val vertices: MutableList<Vector3D>, val faces: MutableList<Face>, val tolerance: Double) {
+class Mesh(val tolerance: Double) {
+    val vertices = ArrayList<Vector3D>()
+    val faces = ArrayList<Face>()
 
-    constructor() : this(ArrayList(), ArrayList(), DEFAULT_TOLERANCE)
+    constructor() : this(DEFAULT_TOLERANCE)
 
-    constructor(polygons: List<List<Vector3D>>) : this() {
-        polygons.forEach { Face(it) }
+    constructor(vs: List<Vector3D>, fs: List<Face>, tolerance: Double): this(tolerance) {
+        vertices.addAll(vs)
+        fs.map { Face(it.vIndexes) }
     }
+
+    constructor(polygons: List<List<Vector3D>>) : this(polygons, DEFAULT_TOLERANCE)
+    constructor(polygons: List<List<Vector3D>>, tolerance: Double) : this(tolerance) { polygons.forEach { Face(it) } }
 
     companion object {
         val DEFAULT_TOLERANCE = 0.001
@@ -39,7 +45,6 @@ class Mesh(val vertices: MutableList<Vector3D>, val faces: MutableList<Face>, va
         if (polygon.size <= 2) throw IllegalArgumentException("Polygon ${polygon} has too few sides")
         return Face(polygon.asList())
     }
-
 
     /**
      * Add a new vertex on an edge. This increases the number of vertices of
@@ -100,11 +105,12 @@ class Mesh(val vertices: MutableList<Vector3D>, val faces: MutableList<Face>, va
         fun hasPointIndex(i: Int) = startIndex == i || endIndex == i
 
         override fun toString() = "(${startIndex}->${endIndex})"
-        override fun equals(obj: Any?): Boolean {
-            if (obj == null) return false
-            if (obj === this) return true
-            if (obj.javaClass !== javaClass) return false
-            val rhs = obj as Edge
+
+        override fun equals(other: Any?): Boolean {
+            if (other == null) return false
+            if (other === this) return true
+            if (other.javaClass !== javaClass) return false
+            val rhs = other as Edge
             val e = EqualsBuilder()
                     .append(startIndex, rhs.startIndex)
                     .append(endIndex, rhs.endIndex)

@@ -17,7 +17,7 @@ import java.util.logging.Logger
  */
 class Parser {
     companion object {
-        val logger = Logger.getLogger(Parser.javaClass.name)
+        val logger = Logger.getLogger(Parser::class.java.name)
         val DELIMS = Regex(" \t\n")
     }
 

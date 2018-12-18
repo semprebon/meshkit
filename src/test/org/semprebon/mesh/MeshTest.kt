@@ -54,7 +54,7 @@ class MeshTest {
         }
     }
 
-    class `splitEdgefFace` {
+    class `splitEdgeFace` {
         @Test
         fun `outside edge`() {
             val mesh = simpleMesh()
@@ -71,10 +71,10 @@ class MeshTest {
         @Test
         fun `inside edge`() {
             val mesh = simpleMesh()
-            mesh.splitEdge(mesh.Edge(0, 2), Vector3D(0.5, 0.5, 0.0))
+            mesh.splitEdge(mesh.Edge(0, 2), Vector3D(0.3, 0.3, 0.0))
             assertEquals(5, mesh.vertices.size)
-            assertContains(Vector3D(0.5, 0.5, 0.0), mesh.vertices)
-            val i = mesh.indexOf(Vector3D(0.5, 0.5, 0.0))
+            assertContains(Vector3D(0.3, 0.3, 0.0), mesh.vertices)
+            val i = mesh.indexOf(Vector3D(0.3, 0.3, 0.0))
             assertTrue(mesh.edges().any { edge -> edge.isCoincident(mesh.Edge(0, i)) },
                 "${mesh.edges()} should have edge like (0,${i})")
             assertTrue(mesh.edges().any { edge -> edge.isCoincident(mesh.Edge(2, i)) },

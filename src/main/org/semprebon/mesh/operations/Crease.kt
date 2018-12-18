@@ -9,7 +9,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import org.apache.commons.math3.geometry.partitioning.Region
 import org.semprebon.mesh.Conversion
 
-class Crease(val segment: List<Vector2D>, val tolerance: Double = 0.001): RemeshFaces.PolygonSplitter {
+class Crease(val segment: List<Vector2D>, val tolerance: Double = 0.001): Remesher.PolygonSplitter {
 
     companion object {
         val edgeIndexes = (0..2).zip(listOf(1, 2, 0))
@@ -20,7 +20,7 @@ class Crease(val segment: List<Vector2D>, val tolerance: Double = 0.001): Remesh
 
     val line = SubLine(segment[0], segment[1], tolerance)
 
-    inline fun isOutside(triangle: PolygonsSet, point: Vector2D) = triangle.checkPoint(point) == Region.Location.OUTSIDE
+    fun isOutside(triangle: PolygonsSet, point: Vector2D) = triangle.checkPoint(point) == Region.Location.OUTSIDE
 
     fun edges(face: List<Vector2D>) = face.zip(face.drop(1) + face.take(1))
 
@@ -32,7 +32,7 @@ class Crease(val segment: List<Vector2D>, val tolerance: Double = 0.001): Remesh
         fun isValid() = point != null
     }
 
-    override fun apply(face: List<Vector3D>): List<List<Vector3D>> {
+    override fun apply(face: List<Vector3D>): List<List<Vector3D>> {                        
         val face2D = face.map { Conversion.to2d(it) }
         val triangle = PolygonsSet(tolerance, *face2D.toTypedArray())
         val outsides = segment.map { isOutside(triangle, it) }

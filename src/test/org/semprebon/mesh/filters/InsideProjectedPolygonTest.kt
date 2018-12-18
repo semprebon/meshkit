@@ -7,9 +7,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.semprebon.mesh.Conversion
+import org.semprebon.mesh.MeshTestHelper
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InsideProjectedPolygonTest {
+
+    companion object: MeshTestHelper() {
+    }
 
     val unitSquare2D = listOf(
         Vector2D(0.0, 0.0), Vector2D(1.0, 0.0),Vector2D(1.0, 1.0),Vector2D(0.0, 1.0))
@@ -64,4 +69,19 @@ class InsideProjectedPolygonTest {
         }
     }
 
+    @Test
+    fun `road test`() {
+        val mesh = meshFrom(listOf(
+                Vector2D(0.0, 0.0),
+                Vector2D(3.0, 0.0),
+                Vector2D(3.0, 1.0),
+                Vector2D(1.0, 1.0),
+                Vector2D(1.0, 4.0),
+                Vector2D(0.0, 4.0)))
+        val tolerance = 0.01
+        val polygon = mesh.vertices.map(Conversion::to2d)
+        val predicate = InsideProjectedPolygon(polygon, tolerance)
+
+        assertTrue(predicate.test(Vector3D(0.5,0.5, 10.0)))
+    }
 }

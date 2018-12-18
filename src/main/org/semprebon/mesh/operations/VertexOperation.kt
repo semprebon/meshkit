@@ -11,6 +11,6 @@ class VertexOperation(val operation: UnaryOperator<Vector3D>): UnaryOperator<Mes
     override fun apply(mesh: Mesh): Mesh {
         val newVertices
                 = mesh.vertices.map { operation.apply(it) }
-        return Mesh(newVertices.toMutableList(), mesh.faces.toMutableList(), mesh.tolerance)
+        return Mesh(mesh.faces.map { face -> face.vIndexes.map { newVertices[it] } }, mesh.tolerance)
     }
 }

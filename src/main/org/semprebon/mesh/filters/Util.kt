@@ -17,4 +17,5 @@ object Util {
     fun anyVerticesOfFace(predicate: Predicate<Vector3D>) = object: Predicate<Mesh.Face> {
         override fun test(face: Mesh.Face) = face.vertices.any(predicate::test)
     }
+
 }
