@@ -9,6 +9,7 @@ object Util {
     fun <T> allPredicate() = Predicate<T> { v -> true }
 
     val ALL_VERTICES = allPredicate<Vector3D>()
+    val ALL_FACES = allPredicate<Mesh.Face>()
 
     fun allVerticesOfFace(predicate: Predicate<Vector3D>) = object: Predicate<Mesh.Face> {
         override fun test(face: Mesh.Face) = face.vertices.all(predicate::test)

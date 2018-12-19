@@ -56,6 +56,24 @@ class MeshTest {
 
     class `splitEdgeFace` {
         @Test
+        fun `unit square`() {
+            val mesh = squareMesh(1)
+            mesh.splitEdge(mesh.Edge(1, 0), v(0.5, 0.0, 0.0))
+            assertEquals(5, mesh.vertices.size)
+            assertContains(Vector3D(0.5, 0.0, 0.0), mesh.vertices)
+
+
+            val vertices = mesh.faces[0].vertices
+            val i = vertices.indexOf(v(0.5, 0.0, 0.0))
+            val inc = Geometry.Incrementer.forList(vertices)
+
+            val expectedVertices = listOf(v(0.0, 0.0, 0.0), v(1.0, 0.0, 0.0))
+            val adjacentVertices = listOf(vertices[inc.prev(i)], vertices[inc.next(i)])
+            assertTrue(adjacentVertices.contains(v(0.0, 0.0, 0.0)), "0,0 is adjacent to new vertex 0,0.5")
+            assertTrue(adjacentVertices.contains(v(1.0, 0.0, 0.0)), "1,0 is adjacent to new vertex 0,0.5")
+        }
+
+        @Test
         fun `outside edge`() {
             val mesh = simpleMesh()
             mesh.splitEdge(mesh.Edge(0, 1), Vector3D(1.0, 0.0, 0.0))

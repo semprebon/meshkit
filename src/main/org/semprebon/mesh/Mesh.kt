@@ -56,16 +56,17 @@ class Mesh(val tolerance: Double) {
      * @param newVertex vertex to add. This should be close to lying on the existing edge
      */
     fun splitEdge(edge: Edge, newVertex: Vector3D): Int {
-         fun splitEdgeOnFace(faceIndex: Int, edge: Edge, vertex: Int) {
+        fun splitEdgeOnFace(faceIndex: Int, edge: Edge, vertex: Int) {
             val face = faces[faceIndex]
-            val index = min(face.vIndexes.indexOf(edge.startIndex), face.vIndexes.indexOf(edge.endIndex))
+            val index = if (face.edges().contains(edge)) edge.startIndex else edge.endIndex
             val newVIndexes = face.vIndexes.take(index+1) + listOf(vertex) + face.vIndexes.drop(index+1)
             faces[faceIndex] = Face(newVIndexes.toTypedArray())
-        }
-
+         }
         val faceIndexPair = edge.faceIndexes()
         val vertexIndex = assureIndexOf(newVertex)
-        splitEdgeOnFace(faceIndexPair.first!!, edge, vertexIndex)
+        if (faceIndexPair.first != null) {
+            splitEdgeOnFace(faceIndexPair.first!!, edge, vertexIndex)
+        }
         if (faceIndexPair.second != null) {
             splitEdgeOnFace(faceIndexPair.second!!, edge, vertexIndex)
         }

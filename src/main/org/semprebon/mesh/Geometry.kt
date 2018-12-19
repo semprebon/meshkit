@@ -75,9 +75,15 @@ object Geometry {
         return true
     }
 
-    class Incrementer(val limit: Int) {
-        fun next(i: Int) = (i + 1) % limit
-        fun prev(i: Int) = (i - 1) % limit
+    class Incrementer(val range: IntRange) {
+        constructor(limit: Int): this(0..limit)
+
+        companion object {
+            fun <T>forList(list: List<T>) = Incrementer(list.indices)
+        }
+
+        fun next(i: Int) = if (i == range.endInclusive) range.first else i + 1
+        fun prev(i: Int) = if (i == range.start) range.endInclusive else i - 1
     }
 
 
