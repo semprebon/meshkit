@@ -19,6 +19,10 @@ object Util {
         override fun test(face: Mesh.Face) = face.vertices.any(predicate::test)
     }
 
+    fun eitherFaceOfEdge(predicate: Predicate<Mesh.Face>) = object: Predicate<Mesh.Edge> {
+        override fun test(edge: Mesh.Edge): Boolean = edge.faces().any { predicate.test(it) }
+    }
+
     fun createFacePredicateFor(predicate: Predicate<List<Vector3D>>)
         = object: Predicate<Mesh.Face> { override fun test(face: Mesh.Face) = predicate.test(face.vertices) }
 

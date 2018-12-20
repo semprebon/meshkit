@@ -58,7 +58,7 @@ class Mesh(val tolerance: Double) {
     fun splitEdge(edge: Edge, newVertex: Vector3D): Int {
         fun splitEdgeOnFace(faceIndex: Int, edge: Edge, vertex: Int) {
             val face = faces[faceIndex]
-            val index = if (face.edges().contains(edge)) edge.startIndex else edge.endIndex
+            val index = face.vIndexes.indexOf(if (face.edges().contains(edge)) edge.startIndex else edge.endIndex)
             val newVIndexes = face.vIndexes.take(index+1) + listOf(vertex) + face.vIndexes.drop(index+1)
             faces[faceIndex] = Face(newVIndexes.toTypedArray())
          }
@@ -94,6 +94,8 @@ class Mesh(val tolerance: Double) {
             return Pair(left, right)
         }
 
+        fun faces() = faces.filter { it.edges().any { this.isCoincident(it) } }
+
         fun isCanonical() = startIndex < endIndex
 
         fun canonical() = if (isCanonical()) this else swap()
@@ -107,6 +109,8 @@ class Mesh(val tolerance: Double) {
         fun hasPointIndex(i: Int) = startIndex == i || endIndex == i
 
         override fun toString() = "(${startIndex}->${endIndex})"
+
+        fun mesh() = this@Mesh
 
         override fun equals(other: Any?): Boolean {
             if (other == null) return false
