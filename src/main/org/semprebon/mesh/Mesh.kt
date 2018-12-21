@@ -154,7 +154,7 @@ class Mesh(val tolerance: Double) {
                 get() = vertices[0].crossProduct(vertices[1]).normalize()
 
         fun edges(): Collection<Edge> =
-                vIndexes.zip(vIndexes.drop(1) + vIndexes.take(1)).map { Edge(it.first, it.second) }
+                Geometry.eachPair(vIndexes).map { Edge(it.first, it.second) }
 
         fun mesh() = this@Mesh
     }

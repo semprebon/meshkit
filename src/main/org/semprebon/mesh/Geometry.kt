@@ -20,6 +20,9 @@ object Geometry {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y)
     }
 
+    fun <T>eachPair(list: List<T>) = list.indices.map { Pair(list[it], list[(it+1)%list.size]) }
+    fun <T>eachPair(list: Array<T>) = list.indices.map { Pair(list[it], list[(it+1)%list.size]) }
+
     fun pointInTriangle(pt: Vector2D, tri: List<Vector2D>): Boolean {
         val d1: Double
         val d2: Double

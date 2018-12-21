@@ -1,6 +1,7 @@
 package org.semprebon.mesh.operations
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+import org.semprebon.mesh.Geometry
 import org.semprebon.mesh.Mesh
 import org.semprebon.mesh.filters.Util
 import java.util.function.BiFunction
@@ -16,22 +17,28 @@ abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.se
         override fun apply(face: Mesh.Face): List<List<Vector3D>> { return listOf() }
     }
 
-    interface FaceGenerator: BiFunction<Mesh.Face, Int, List<Vector3D>>
-
     /**
      * Generates one new face for each new vertex
      */
-    open inner class NewVertexFaceRemesher(val faceGenerator: FaceGenerator): FaceSplitter {
+    abstract inner class NewVertexFaceRemesher: FaceSplitter {
 
         open fun before(face: Mesh.Face) = face
         open fun after(originalFace: Mesh.Face, newFaces: List<List<Vector3D>>) = newFaces
+        var newVIndexes: List<Int>? = null
+
+        abstract fun createFace(face: Mesh.Face, index: Int): List<Vector3D>
+
+        private fun createFaces(face: Mesh.Face, newVIndexes: List<Int>): List<List<Vector3D>> {
+            val center = Geometry.center(face.vertices)
+            val newFaces = face.vIndexes.mapIndexed { i, vIndex ->
+                if (!newVIndexes.contains(vIndex)) createFace(face, i) else emptyList()
+            }.filter { !it.isEmpty() }
+            return newFaces
+        }
 
         override fun apply(face: Mesh.Face): List<List<Vector3D>> {
-            val mesh: Mesh = face.mesh()
-            val newVIndexes: List<Int> = face.vIndexes.filter { vIndex -> midpointIndexes!!.contains(vIndex) }
-            return face.vIndexes.mapIndexed { i, vIndex ->
-                if (!newVIndexes.contains(vIndex)) faceGenerator.apply(face, i) else emptyList()
-            }.filter { !it.isEmpty() }
+            newVIndexes = face.vIndexes.filter { vIndex -> midpointIndexes!!.contains(vIndex) }
+            return createFaces(face, newVIndexes!!)
         }
     }
 
@@ -42,6 +49,7 @@ abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.se
         val newFaces = faceMeshingAlgorithm.apply(adjustedFace)
         return faceMeshingAlgorithm.after(face, newFaces)
     }
+
     override fun apply(mesh: Mesh): Mesh {
         val newMesh = Mesh(mesh.faces.map(Mesh.Face::vertices), mesh.tolerance)
         val meshingAlgorithm = filteredFaceSplitter(faceFilter, faceMeshingAlgorithm)
@@ -49,7 +57,7 @@ abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.se
         val edgeFilter = Util.eitherFaceOfEdge(faceFilter)
         midpointIndexes = newMesh.edges().filter { edgeFilter.test(it) }.map { bisect(it) }
 
-        return Mesh(newMesh.faces.flatMap { generaterFacesForFace(it) })
+        return Mesh(newMesh.faces.flatMap { if (faceFilter.test(it)) generaterFacesForFace(it) else listOf(it.vertices) })
     }
 
     private fun bisect(edge: Mesh.Edge): Int {

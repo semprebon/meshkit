@@ -1,10 +1,12 @@
 package org.semprebon.mesh.operations
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.semprebon.mesh.MeshTestHelper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.semprebon.mesh.Geometry
 import org.semprebon.mesh.MeshVisualizer
 import org.semprebon.mesh.filters.NearPolyline
 import org.semprebon.mesh.filters.Util
@@ -23,7 +25,7 @@ class QuadFacesTest {
     fun `subdivide a square`() {
         val mesh = QuadFaces().apply(square)
 
-        MeshVisualizer.start("subdivideEdgeSquare.png") { ->
+        MeshVisualizer.start("quadFacesTestSquare.png") { ->
             MeshVisualizer.visualize(mesh)
         }
         assertEquals(4, mesh.faces.size)
@@ -34,7 +36,6 @@ class QuadFacesTest {
             assertTrue(face.vertices.contains(square.vertices[i]))
         }
         val face = mesh.faces[0]
-
     }
 
     @Test
@@ -42,13 +43,10 @@ class QuadFacesTest {
         val mesh = QuadFaces(Util.anyVerticesOfFace(nearPolyline)).apply(square10x10)
         val squaresDivided = 16
 
-        MeshVisualizer.start("subdivideEdgeGrid.png") { ->
+        MeshVisualizer.start("quadFacesTestGrid.png") { ->
             MeshVisualizer.visualize(mesh)
         }
 
-        assertEquals(squaresDivided*3, mesh.faces.size - square10x10.faces.size)
-        mesh.faces.forEachIndexed { i, face ->
-            assertEquals(4, face.vIndexes.size)
-        }
+        Assertions.assertEquals(squaresDivided * 3, mesh.faces.size - square10x10.faces.size)
     }
 }

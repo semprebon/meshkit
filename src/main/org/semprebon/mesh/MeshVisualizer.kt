@@ -6,6 +6,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
+import java.awt.Shape
 import java.awt.geom.Path2D
 import java.awt.geom.Rectangle2D
 import java.awt.image.BufferedImage
@@ -65,6 +66,13 @@ object MeshVisualizer {
         return Pair(Vector2D(xs.min()!!, ys.min()!!), Vector2D(xs.max()!!, ys.max()!!))
     }
 
+    fun edgeShape(edge: Mesh.Edge): Shape {
+        val shape = Path2D.Double()
+        shape.moveTo(edge.start.x, edge.start.y)
+        shape.lineTo(edge.end.x, edge.end.y)
+        return shape;
+    }
+
     fun visualize(mesh: Mesh) {
         val img = image
         if (img == null) return
@@ -72,9 +80,6 @@ object MeshVisualizer {
         val graphics = setupGraphics(img, min, max)
 
         graphics.paint = Color.BLUE
-        mesh.edges().forEach { edge ->
-            val (p1, p2)= map(edge)
-            graphics.drawLine(p1.first, p1.second, p2.first, p2.second)
-        }
+        mesh.edges().forEach { graphics.draw(edgeShape(it)) }
     }
 }
