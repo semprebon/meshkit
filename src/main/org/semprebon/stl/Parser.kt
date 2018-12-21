@@ -1,7 +1,7 @@
 package org.semprebon.stl
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import java.io.DataInputStream
 import java.io.FileInputStream
 import java.io.FileReader
@@ -33,7 +33,7 @@ class Parser {
      * formatted
      */
     @Throws(IOException::class)
-    fun parse(filepath: Path): Mesh {
+    fun parse(filepath: Path): FaceVertexMesh {
         val parser = BinaryParser(filepath)
         return parser.parse()
     }
@@ -88,7 +88,7 @@ class Parser {
 //     * @throws IllegalArgumentException Thrown if the STL is not properly
 //     * formatted
 //     */
-//    fun readASCII(filepath: Path, mesh: Mesh) {
+//    fun readASCII(filepath: Path, mesh: FaceVertexMesh) {
 //        val tokenizer = StreamTokenizer(BufferedReader(FileReader(filepath.toString())))
 //        do {
 //
@@ -161,9 +161,9 @@ class Parser {
     class BinaryParser(filepath: Path) {
         val input = DataInputStream(FileInputStream(filepath.toString()))
 
-        fun parse(): Mesh {
+        fun parse(): FaceVertexMesh {
             logger.log(Level.FINEST, "Parsing binary STL format")
-            val mesh = Mesh()
+            val mesh = FaceVertexMesh()
 
                 // skip the header
                 readHeader()

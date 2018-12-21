@@ -1,16 +1,14 @@
 package org.semprebon.mesh.operations
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
-import org.semprebon.mesh.Mesh
-import org.semprebon.mesh.filters.Util
-import java.util.function.Predicate
+import org.semprebon.mesh.FaceVertexMesh
 import java.util.function.UnaryOperator
 
-class VertexOperation(val operation: UnaryOperator<Vector3D>): UnaryOperator<Mesh> {
+class VertexOperation(val operation: UnaryOperator<Vector3D>): UnaryOperator<FaceVertexMesh> {
 
-    override fun apply(mesh: Mesh): Mesh {
+    override fun apply(mesh: FaceVertexMesh): FaceVertexMesh {
         val newVertices
                 = mesh.vertices.map { operation.apply(it) }
-        return Mesh(mesh.faces.map { face -> face.vIndexes.map { newVertices[it] } }, mesh.tolerance)
+        return FaceVertexMesh(mesh.faces.map { face -> face.vIndexes.map { newVertices[it] } }, mesh.tolerance)
     }
 }

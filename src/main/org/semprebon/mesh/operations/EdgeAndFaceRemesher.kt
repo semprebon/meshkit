@@ -2,19 +2,18 @@ package org.semprebon.mesh.operations
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.semprebon.mesh.Geometry
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import org.semprebon.mesh.filters.Util
-import java.util.function.BiFunction
 import java.util.function.Predicate
 
 /**
  * Abstract class for remesher that modifies both edges and faces
  */
-abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.semprebon.mesh.filters.Util.ALL_FACES) : Remesher(Dummy()) {
+abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<FaceVertexMesh.Face> = org.semprebon.mesh.filters.Util.ALL_FACES) : Remesher(Dummy()) {
     var midpointIndexes: List<Int>? = null
 
     class Dummy : FaceSplitter {
-        override fun apply(face: Mesh.Face): List<List<Vector3D>> { return listOf() }
+        override fun apply(face: FaceVertexMesh.Face): List<List<Vector3D>> { return listOf() }
     }
 
     /**
@@ -22,13 +21,13 @@ abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.se
      */
     abstract inner class NewVertexFaceRemesher: FaceSplitter {
 
-        open fun before(face: Mesh.Face) = face
-        open fun after(originalFace: Mesh.Face, newFaces: List<List<Vector3D>>) = newFaces
+        open fun before(face: FaceVertexMesh.Face) = face
+        open fun after(originalFace: FaceVertexMesh.Face, newFaces: List<List<Vector3D>>) = newFaces
         var newVIndexes: List<Int>? = null
 
-        abstract fun createFace(face: Mesh.Face, index: Int): List<Vector3D>
+        abstract fun createFace(face: FaceVertexMesh.Face, index: Int): List<Vector3D>
 
-        private fun createFaces(face: Mesh.Face, newVIndexes: List<Int>): List<List<Vector3D>> {
+        private fun createFaces(face: FaceVertexMesh.Face, newVIndexes: List<Int>): List<List<Vector3D>> {
             val center = Geometry.center(face.vertices)
             val newFaces = face.vIndexes.mapIndexed { i, vIndex ->
                 if (!newVIndexes.contains(vIndex)) createFace(face, i) else emptyList()
@@ -36,7 +35,7 @@ abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.se
             return newFaces
         }
 
-        override fun apply(face: Mesh.Face): List<List<Vector3D>> {
+        override fun apply(face: FaceVertexMesh.Face): List<List<Vector3D>> {
             newVIndexes = face.vIndexes.filter { vIndex -> midpointIndexes!!.contains(vIndex) }
             return createFaces(face, newVIndexes!!)
         }
@@ -44,23 +43,23 @@ abstract class EdgeAndFaceRemesher(val faceFilter: Predicate<Mesh.Face> = org.se
 
     abstract val faceMeshingAlgorithm: NewVertexFaceRemesher
 
-    open fun generaterFacesForFace(face: Mesh.Face): List<List<Vector3D>> {
+    open fun generaterFacesForFace(face: FaceVertexMesh.Face): List<List<Vector3D>> {
         val adjustedFace = faceMeshingAlgorithm.before(face)
         val newFaces = faceMeshingAlgorithm.apply(adjustedFace)
         return faceMeshingAlgorithm.after(face, newFaces)
     }
 
-    override fun apply(mesh: Mesh): Mesh {
-        val newMesh = Mesh(mesh.faces.map(Mesh.Face::vertices), mesh.tolerance)
+    override fun apply(mesh: FaceVertexMesh): FaceVertexMesh {
+        val newMesh = FaceVertexMesh(mesh.faces.map(FaceVertexMesh.Face::vertices), mesh.tolerance)
         val meshingAlgorithm = filteredFaceSplitter(faceFilter, faceMeshingAlgorithm)
 
         val edgeFilter = Util.eitherFaceOfEdge(faceFilter)
         midpointIndexes = newMesh.edges().filter { edgeFilter.test(it) }.map { bisect(it) }
 
-        return Mesh(newMesh.faces.flatMap { if (faceFilter.test(it)) generaterFacesForFace(it) else listOf(it.vertices) })
+        return FaceVertexMesh(newMesh.faces.flatMap { if (faceFilter.test(it)) generaterFacesForFace(it) else listOf(it.vertices) })
     }
 
-    private fun bisect(edge: Mesh.Edge): Int {
+    private fun bisect(edge: FaceVertexMesh.Edge): Int {
         val v = edge.start.add(edge.end).scalarMultiply(0.5)!!
         return edge.mesh().splitEdge(edge, v)
     }

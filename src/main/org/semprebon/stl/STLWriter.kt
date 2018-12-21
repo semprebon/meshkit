@@ -2,13 +2,13 @@ package org.semprebon.stl
 
 import org.apache.commons.io.EndianUtils
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import java.io.FileOutputStream
 import java.io.OutputStream
 
 class STLWriter(val filename: String) {
 
-    fun write(mesh: Mesh) {
+    fun write(mesh: FaceVertexMesh) {
         val file = FileOutputStream(filename)
         writeHeader(file)
         EndianUtils.writeSwappedInteger(file, mesh.faces.size)
@@ -20,7 +20,7 @@ class STLWriter(val filename: String) {
             EndianUtils.writeSwappedShort(file, 0)
         }
         file.close()
-        println("Mesh")
+        println("FaceVertexMesh")
     }
 
     fun writeHeader(out: OutputStream) {

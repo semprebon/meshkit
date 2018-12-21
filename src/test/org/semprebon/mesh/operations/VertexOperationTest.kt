@@ -4,7 +4,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import org.semprebon.mesh.MeshTestHelper
 import java.util.function.Predicate
 import java.util.function.UnaryOperator
@@ -17,7 +17,7 @@ class VertexOperationTest {
 
     val simpleMesh = simpleMesh()
 
-    class onlyEven(val mesh: Mesh): Predicate<Vector3D> {
+    class onlyEven(val mesh: FaceVertexMesh): Predicate<Vector3D> {
         fun isEven(x: Int) = (x % 2) == 0
 
         override fun test(vertex: Vector3D): Boolean {

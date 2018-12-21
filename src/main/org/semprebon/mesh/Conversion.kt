@@ -6,7 +6,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 object Conversion {
     fun to2d(p: Vector3D) = Vector2D(p.x, p.y)
 
-    fun triangleTo2d(triangle: Mesh.Face) = triangle.vertices.map { p -> to2d(p) }
+    fun triangleTo2d(triangle: FaceVertexMesh.Face) = triangle.vertices.map { p -> to2d(p) }
 
     fun to3d(p: Vector2D, z: Double = 0.0) = Vector3D(p.x, p.y, z)
 

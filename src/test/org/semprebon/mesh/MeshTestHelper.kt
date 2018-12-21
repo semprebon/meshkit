@@ -14,7 +14,7 @@ open class MeshTestHelper {
         Assertions.assertEquals(expected.z, actual.z, tolerance)
     }
 
-    fun assertEquals(expected: Mesh.Face, actual: Mesh.Face) {
+    fun assertEquals(expected: FaceVertexMesh.Face, actual: FaceVertexMesh.Face) {
         for (i in 0..2) {
             assertEquals(expected.vertices[i], actual.vertices[i])
         }
@@ -45,13 +45,13 @@ open class MeshTestHelper {
         }
     }
 
-    fun meshFrom(path: List<Vector2D>): Mesh = Mesh(trianglesFrom(path))
+    fun meshFrom(path: List<Vector2D>): FaceVertexMesh = FaceVertexMesh(trianglesFrom(path))
 
     /**
      * Create a mesh of unit squares with its lower left corner at 0,0
      */
-    fun squareMesh(n:Int, z: Double = 0.0): Mesh {
-        val mesh = Mesh(tolerance)
+    fun squareMesh(n:Int, z: Double = 0.0): FaceVertexMesh {
+        val mesh = FaceVertexMesh(tolerance)
         for (i in 0..n-1) {
             for (j in 0..n-1) {
                 mesh.add(
@@ -67,8 +67,8 @@ open class MeshTestHelper {
     /**
      * Returns a simple mesh of four points, three triangles with a common vertex
      */
-    fun simpleMesh(): Mesh {
-        val mesh = Mesh()
+    fun simpleMesh(): FaceVertexMesh {
+        val mesh = FaceVertexMesh()
         val vs = listOf(
             Vector3D(0.0, 0.0, 0.0),
             Vector3D(2.0, 0.0, 0.0),
@@ -83,8 +83,8 @@ open class MeshTestHelper {
     /**
      * Returns a disconnected mesh of two separate triangles
      */
-    fun disconnectedMesh(): Mesh {
-        val mesh = Mesh()
+    fun disconnectedMesh(): FaceVertexMesh {
+        val mesh = FaceVertexMesh()
         val vs = listOf(
             Vector3D(0.0, 0.0, 0.0),
             Vector3D(1.0, 0.0, 0.0),
@@ -101,8 +101,8 @@ open class MeshTestHelper {
     /**
      * Returns a mesh of two separate triangles connected at a single point
      */
-    fun pointConnectedMesh(): Mesh {
-        val mesh = Mesh()
+    fun pointConnectedMesh(): FaceVertexMesh {
+        val mesh = FaceVertexMesh()
         val vs = listOf(
             Vector3D(0.0, 0.0, 0.0),
             Vector3D(1.0, 0.0, 0.0),

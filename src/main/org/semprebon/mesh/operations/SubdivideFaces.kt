@@ -2,7 +2,7 @@ package org.semprebon.mesh.operations
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.semprebon.mesh.Geometry
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import org.semprebon.mesh.filters.Util
 import java.util.function.Predicate
 
@@ -11,12 +11,12 @@ import java.util.function.Predicate
  *
  * For an n-gon face, this creates n triangle faces with a smaller n-gon in the center.
  */
-class SubdivideFaces(faceFilter: Predicate<Mesh.Face> = Util.ALL_FACES) : EdgeAndFaceRemesher(faceFilter) {
+class SubdivideFaces(faceFilter: Predicate<FaceVertexMesh.Face> = Util.ALL_FACES) : EdgeAndFaceRemesher(faceFilter) {
 
 
     inner class FaceRemesher : NewVertexFaceRemesher() {
 
-        override fun createFace(face: Mesh.Face, newIndex: Int): List<Vector3D> {
+        override fun createFace(face: FaceVertexMesh.Face, newIndex: Int): List<Vector3D> {
             val inc = Geometry.Incrementer(face.vIndexes.size - 1)
             val newFace = listOf(
                 face.vertices[newIndex],
@@ -26,7 +26,7 @@ class SubdivideFaces(faceFilter: Predicate<Mesh.Face> = Util.ALL_FACES) : EdgeAn
             return newFace
         }
 
-        override fun after(face: Mesh.Face, faces: List<List<Vector3D>>): List<List<Vector3D>> {
+        override fun after(face: FaceVertexMesh.Face, faces: List<List<Vector3D>>): List<List<Vector3D>> {
             return faces + listOf(newVIndexes!!.map { face.mesh().vertices[it] })
         }
     }

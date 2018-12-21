@@ -2,15 +2,15 @@ package org.semprebon.mesh.filters
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import org.semprebon.mesh.Conversion
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import java.util.function.Predicate
 
 /**
  * Determine if a face overlaps the specified polygon(s)
  */
-class FaceOverlapsArea(val triangles: List<List<Vector2D>>, val tolerance: Double): Predicate<Mesh.Face> {
+class FaceOverlapsArea(val triangles: List<List<Vector2D>>, val tolerance: Double): Predicate<FaceVertexMesh.Face> {
 
-    override fun test(face: Mesh.Face): Boolean {
+    override fun test(face: FaceVertexMesh.Face): Boolean {
         val face2D = face.vertices.map { Conversion.to2d(it) }
         return triangles.any { trianglesOverlap(face2D, it) }
     }

@@ -9,14 +9,14 @@ import org.junit.jupiter.api.assertThrows
 import java.lang.IllegalArgumentException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MeshTest {
+class FaceVertexMeshTest {
 
     companion object: MeshTestHelper()
 
     class `add` {
         @Test
         fun `add to empty mesh`() {
-            val mesh = Mesh()
+            val mesh = FaceVertexMesh()
             mesh.add(Vector3D(0.0, 0.0, 0.0),
                 Vector3D(1.0, 0.0, 0.0),
                 Vector3D(0.0, 1.0, 0.0))
@@ -154,7 +154,7 @@ class MeshTest {
                     Vector3D(0.0, 0.0, 0.0),
                     Vector3D(1.0, 0.0, 0.0),
                     Vector3D(0.0, 1.0, 0.0))
-                assertEquals(0.5, Mesh.signedArea(polygon, Vector3D.PLUS_K))
+                assertEquals(0.5, FaceVertexMesh.signedArea(polygon, Vector3D.PLUS_K))
             }
         }
     }

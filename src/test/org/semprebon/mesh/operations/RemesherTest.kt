@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.semprebon.mesh.MeshTestHelper
 import java.util.function.Predicate
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import org.semprebon.mesh.filters.Util
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -41,8 +41,8 @@ class RemesherTest {
         assertEquals(5, mesh.faces.size)
         assertEquals(5, mesh.vertices.size)
         originalMesh.vertices.forEach { assertTrue(mesh.vertices.contains(it)) }
-        assertTrue(mesh.faces.map(Mesh.Face::vertices).contains(originalMesh.faces[0].vertices))
-        assertFalse(mesh.faces.map(Mesh.Face::vertices).contains(originalMesh.faces[1].vertices))
-        assertTrue(mesh.faces.map(Mesh.Face::vertices).contains(originalMesh.faces[2].vertices))
+        assertTrue(mesh.faces.map(FaceVertexMesh.Face::vertices).contains(originalMesh.faces[0].vertices))
+        assertFalse(mesh.faces.map(FaceVertexMesh.Face::vertices).contains(originalMesh.faces[1].vertices))
+        assertTrue(mesh.faces.map(FaceVertexMesh.Face::vertices).contains(originalMesh.faces[2].vertices))
     }
 }

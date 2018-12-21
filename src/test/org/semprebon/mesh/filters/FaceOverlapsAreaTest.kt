@@ -2,11 +2,10 @@ package org.semprebon.mesh.filters
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.semprebon.mesh.Conversion
-import org.semprebon.mesh.Mesh
+import org.semprebon.mesh.FaceVertexMesh
 import org.semprebon.mesh.MeshTestHelper
 import org.semprebon.mesh.operations.Triangulate
 
@@ -29,7 +28,7 @@ class FaceOverlapsAreaTest {
         val tolerance = 0.01
         val predicate = FaceOverlapsArea(polygon2D, tolerance)
 
-        val mesh2 = Mesh()
+        val mesh2 = FaceVertexMesh()
         val face = mesh2.Face(Vector3D(0.5, 0.5, 10.0))
 
         //Assertions.assertTrue(predicate.test(face))

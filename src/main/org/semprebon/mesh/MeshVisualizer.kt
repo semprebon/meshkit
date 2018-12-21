@@ -1,7 +1,6 @@
 package org.semprebon.mesh
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
-import org.apache.commons.math3.geometry.euclidean.twod.Segment
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import java.awt.BasicStroke
 import java.awt.Color
@@ -31,7 +30,7 @@ object MeshVisualizer {
     fun map(point: Vector2D) = Pair(map(point.x), map(point.y))
     fun map(point: Vector3D) = Pair(map(point.x), map(point.y))
 
-    fun map(edge: Mesh.Edge) : Pair<Pair<Int, Int>,Pair<Int,Int>>
+    fun map(edge: FaceVertexMesh.Edge) : Pair<Pair<Int, Int>,Pair<Int,Int>>
             = Pair(map(edge.start), map(edge.end))
 
     fun setupGraphics(img: BufferedImage, min: Vector2D, max: Vector2D) : Graphics2D {
@@ -61,19 +60,19 @@ object MeshVisualizer {
         return graphics
     }
 
-    fun limits(mesh: Mesh) : Pair<Vector2D, Vector2D> {
+    fun limits(mesh: FaceVertexMesh) : Pair<Vector2D, Vector2D> {
         val (xs, ys) = mesh.vertices.map { Pair(it.x, it.y) }.unzip()
         return Pair(Vector2D(xs.min()!!, ys.min()!!), Vector2D(xs.max()!!, ys.max()!!))
     }
 
-    fun edgeShape(edge: Mesh.Edge): Shape {
+    fun edgeShape(edge: FaceVertexMesh.Edge): Shape {
         val shape = Path2D.Double()
         shape.moveTo(edge.start.x, edge.start.y)
         shape.lineTo(edge.end.x, edge.end.y)
         return shape;
     }
 
-    fun visualize(mesh: Mesh) {
+    fun visualize(mesh: FaceVertexMesh) {
         val img = image
         if (img == null) return
         val (min, max) = limits(mesh)

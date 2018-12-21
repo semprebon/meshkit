@@ -4,11 +4,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.commons.lang3.builder.HashCodeBuilder
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import java.lang.IllegalArgumentException
-import kotlin.math.min
 
-class Mesh(val tolerance: Double) {
+class FaceVertexMesh(val tolerance: Double) : IMesh {
     val vertices = ArrayList<Vector3D>()
     val faces = ArrayList<Face>()
+
+    override fun vertices() = vertices
+    override fun faces() = faces
 
     constructor() : this(DEFAULT_TOLERANCE)
 
@@ -30,7 +32,7 @@ class Mesh(val tolerance: Double) {
                 .dotProduct(normal) / 2.0
     }
 
-    fun indexOf(v: Vector3D) : Int {
+    override fun indexOf(v: Vector3D) : Int {
         return vertices.indexOf(v)
     }
 
@@ -39,7 +41,7 @@ class Mesh(val tolerance: Double) {
         return indexOf(v)
     }
 
-    fun edges(): Collection<Edge> = faces.flatMap { it.edges() }.map { it.canonical() }.distinct()
+    override fun edges(): Collection<Edge> = faces.flatMap { it.edges() }.map { it.canonical() }.distinct()
 
     fun add(vararg polygon: Vector3D): Face {
         if (polygon.size <= 2) throw IllegalArgumentException("Polygon ${polygon} has too few sides")
@@ -110,7 +112,7 @@ class Mesh(val tolerance: Double) {
 
         override fun toString() = "(${startIndex}->${endIndex})"
 
-        fun mesh() = this@Mesh
+        fun mesh() = this@FaceVertexMesh
 
         override fun equals(other: Any?): Boolean {
             if (other == null) return false
@@ -129,7 +131,6 @@ class Mesh(val tolerance: Double) {
         }
     }
 
-
     /**
      * Represents a face in the mesh.
      *
@@ -144,10 +145,10 @@ class Mesh(val tolerance: Double) {
         constructor(vararg vertices: Vector3D): this(vertices.asList())
 
         var vertices: List<Vector3D>
-                get() = vIndexes.map { this@Mesh.vertices[it] }
+                get() = vIndexes.map { this@FaceVertexMesh.vertices[it] }
                 set(value) {
                     vIndexes.zip(value)
-                            .forEach { (i: Int, v: Vector3D) -> this@Mesh.vertices[i] = v }
+                            .forEach { (i: Int, v: Vector3D) -> this@FaceVertexMesh.vertices[i] = v }
                 }
 
         val normal: Vector3D
@@ -156,7 +157,7 @@ class Mesh(val tolerance: Double) {
         fun edges(): Collection<Edge> =
                 Geometry.eachPair(vIndexes).map { Edge(it.first, it.second) }
 
-        fun mesh() = this@Mesh
+        fun mesh() = this@FaceVertexMesh
     }
 
     /**
@@ -175,7 +176,7 @@ class Mesh(val tolerance: Double) {
     /**
      * Find one perimeter of the mesh
      */
-    fun perimeter(): List<Vector3D> {
+    override fun perimeter(): List<Vector3D> {
         val result = ArrayList<Vector3D>()
         val edges = ArrayList<Edge>(edges().filter { it.isOnPerimeter() })
         if (edges.isEmpty()) return result
@@ -192,7 +193,7 @@ class Mesh(val tolerance: Double) {
         return result
     }
 
-    fun extractConnectedSubmesh(remainingVertices: MutableList<Vector3D>): Mesh {
+    override fun extractConnectedSubmesh(remainingVertices: MutableList<Vector3D>): FaceVertexMesh {
         val workList = ArrayList<Vector3D>()
         val resultVertices = ArrayList<Vector3D>()
 
@@ -212,14 +213,14 @@ class Mesh(val tolerance: Double) {
         val newFaces = faces
             .filter { resultVertices.contains(it.vertices.first()) }
             .map { it.vertices }
-        return Mesh(newFaces)
+        return FaceVertexMesh(newFaces)
     }
 
     /**
      * seperate mesh into connected submeshes
      */
-    fun separate(): List<Mesh> {
-        val result = ArrayList<Mesh>()
+    override fun separate(): List<FaceVertexMesh> {
+        val result = ArrayList<FaceVertexMesh>()
         val remainingVertices = vertices.toMutableList()
         while (!remainingVertices.isEmpty()) {
             result.add(extractConnectedSubmesh(remainingVertices))
